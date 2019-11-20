@@ -1,0 +1,120 @@
+<!--
+Copyright (c) 2019 Andrey Mikhalev
+The full license agreement can be found in the following link:
+https://github.com/evilixy/Task-manager/blob/master/LICENSE
+-->
+
+<!doctype html>
+<html>
+    <head>
+        <title>{{ title }} - Task Manager</title>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" type="image/ico" href="{{url_for('static', filename='images/favicon.ico')}}"/>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.2/dist/Chart.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.2/dist/Chart.min.css">
+        <!--script src="https://code.jquery.com/jquery-latest.min.js"></script-->
+        <script src="{{url_for('static', filename='render.js')}}"></script>
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+
+        <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    </head>
+    <body>
+        <div id="main-body">
+            <div class="header"></div>
+                <div class="mdc-layout-grid">
+                    <div class="mdc-layout-grid__inner">
+                        <div id="container" class="mdc-layout-grid__cell--span-4-desktop">
+                            <div class="mdc-text-field" data-mdc-auto-init="MDCTextField">
+                                <input type="text" id="searchBar" onkeyup="doSearchInList()" class="mdc-text-field__input">
+                                <label class="mdc-floating-label" for="my-text-field">Search</label>
+                                <div class="mdc-line-ripple"></div>
+                            </div>
+                            <button class="mdc-icon-button material-icons" onclick="sortList()">sort_by_alpha</button>
+                            <ul id="listContainer" class="mdc-list" data-mdc-auto-init="MDCList">
+                                {% for proc_key, proc_val in procs.items() %}
+                                    <li class="mdc-list-item" tabindex="-1">
+                                        <span id="{{ proc_key }}" class="mdc-list-item__text">{{ proc_val['name'] }}</span>
+                                        <div class="tools">
+                                            <span onclick="passProcParams(this, '/kill_proccess/', true)" class="right mdc-list-item__meta material-icons">delete</span>
+                                            <span onclick="passProcParams(this, '/open_proccess_directory/')" class="right mdc-list-item__meta material-icons">folder_open</span>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="mdc-layout-grid__cell--span-8-desktop">
+
+                            <div class="mdc-tab-bar" role="tablist" data-mdc-auto-init="MDCTabBar">
+                                <div class="mdc-tab-scroller">
+                                    <div class="mdc-tab-scroller__scroll-area">
+                                        <div class="mdc-tab-scroller__scroll-content">
+                                            <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0">
+                                                <span class="mdc-tab__content">
+                                                    <span class="mdc-tab__icon material-icons" aria-hidden="true">favorite</span>
+                                                    <span class="mdc-tab__text-label">Pie-chart</span>
+                                                </span>
+                                                <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                                                    <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                                                </span>
+                                                <span class="mdc-tab__ripple"></span>
+                                            </button>
+                                            <button class="mdc-tab" role="tab" aria-selected="true" tabindex="0">
+                                                <span class="mdc-tab__content">
+                                                    <span class="mdc-tab__icon material-icons" aria-hidden="true">favorite</span>
+                                                    <span class="mdc-tab__text-label">Horizontal chart</span>
+                                                </span>
+                                                <span class="mdc-tab-indicator mdc-tab-indicator">
+                                                    <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                                                </span>
+                                                <span class="mdc-tab__ripple"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>        
+                            <div class="content content--active">
+                                <canvas id="pieChart" width="800" height="800"></canvas>
+                            </div>
+                            <div class="content">
+                                <canvas id="horizontalBarChart" width="800" height="800"></canvas>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>          
+            <div class="footer"></div>
+        </div>
+        <script> 
+            document.addEventListener("DOMContentLoaded", function(){
+                window.mdc.autoInit();
+
+                // get  data from the server
+                let processes = JSON.parse('{{ procs | tojson }}');
+                let test = setProcesses(processes);
+                let data_for_chart = getDataFromProcs();
+
+                // set charts
+                draw_chart(data_for_chart, 'pie', 'pieChart');
+                draw_chart(data_for_chart, 'horizontalBar', 'horizontalBarChart');
+
+                // initialize material design components
+                var tabBar = new mdc.tabBar.MDCTabBar(document.querySelector('.mdc-tab-bar'));
+                var contentEls = document.querySelectorAll('.content');
+
+                const list = new mdc.list.MDCList(document.querySelector('.mdc-list'));
+                const listItemRipples = list.listElements.map((listItemEl) => new mdc.ripple.MDCRipple(listItemEl));
+
+                tabBar.listen('MDCTabBar:activated', function(event) {
+                    // Hide currently-active content
+                    document.querySelector('.content--active').classList.remove('content--active');
+                    // Show content for newly-activated tab
+                    contentEls[event.detail.index].classList.add('content--active');
+                });
+            });
+        </script>
+    </body>
+
+</html>
+
