@@ -15,6 +15,13 @@ These instructions will get you a copy of the project up and running on your loc
 
 4. Run the Flask application: `python -m flask run`
 
+5. Follow the link: `http://127.0.0.1:5000/home`
+
+6. Task manager web application should look like this:
+
+![image](https://user-images.githubusercontent.com/43108741/69247694-dba47700-0bbb-11ea-9fc1-23bf464cee87.png)
+![image](https://user-images.githubusercontent.com/43108741/69247775-0d1d4280-0bbc-11ea-8113-32f172128381.png)
+
 ## Built With
 
 * [Flask](http://flask.palletsprojects.com/en/1.1.x/) is a micro web framework written in Python.
