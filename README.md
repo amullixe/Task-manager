@@ -7,11 +7,11 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installing
 
-1. Set up a virtual enviroment in the **.src** folder: `python -m venv env`
+1. Set up a virtual enviroment in the *.src* folder: `python -m venv env`
 
 2. Activate the enviroment: `env\Scripts\activate`
 
-3. Install requerement packages from **requirements.txt**: `pip install -r requirements.txt`
+3. Install requerement packages from *requirements.txt*: `pip install -r requirements.txt`
 
 4. Run the Flask application: `python -m flask run`
 
